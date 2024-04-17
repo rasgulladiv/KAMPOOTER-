@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a binary tree node
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new binary tree node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a new node into the binary tree
+struct Node* insertNode(struct Node* root, int data) {
+    if (root == NULL) {
+        return createNode(data);
+    }
+    if (data < root->data) {
+        root->left = insertNode(root->left, data);
+    } else if (data > root->data) {
+        root->right = insertNode(root->right, data);
+    }
+    return root;
+}
+
+// Function to check if there exists a root-to-leaf path with the given sum
+int hasPathSum(struct Node* root, int sum) {
+    if (root == NULL)
+        return 0;
+
+    if (root->left == NULL && root->right == NULL) {
+        // Leaf node, check if the sum matches
+        return (sum == root->data);
+    }
+
+    // Recursively check left and right subtrees
+    return hasPathSum(root->left, sum - root->data) || hasPathSum(root->right, sum - root->data);
+}
+
+int main() {
+    struct Node* root = NULL;
+    int n, data, targetSum;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    printf("Enter the values for the nodes:\n");
+    for (int i = 0; i < n; ++i) {
+        scanf("%d", &data);
+        root = insertNode(root, data);
+    }
+
+    printf("Enter the target sum: ");
+    scanf("%d", &targetSum);
+
+    if (hasPathSum(root, targetSum))
+        printf("There is a root-to-leaf path with sum %d\n", targetSum);
+    else
+        printf("No such path exists.\n");
+
+    return 0;
+}
