@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <ctype.h>
+
+#define MAX_SIZE 20
+
+int top = -1;
+int s[MAX_SIZE];
+
+void push(int item) {
+    if (top == MAX_SIZE - 1) {
+        printf("Stack Overflow!\n");
+        exit(EXIT_FAILURE);
+    }
+    top++;
+    s[top] = item;
+}
+
+int pop() {
+    if (top == -1) {
+        printf("Stack Underflow!\n");
+        exit(EXIT_FAILURE);
+    }
+    int item = s[top];
+    top--;
+    return item;
+}
+
+int main() {
+    char postfix[90];
+    printf("Enter a valid postfix expression:\n");
+    scanf("%s", postfix);
+
+    for (int i = 0; postfix[i] != '\0'; i++) {
+        char symb = postfix[i];
+        if (isdigit(symb)) {
+            push(symb - '0');
+        } else {
+            int op2 = pop();
+            int op1 = pop();
+            switch (symb) {
+                case '+':
+                    push(op1 + op2);
+                    break;
+                case '-':
+                    push(op1 - op2);
+                    break;
+                case '*':
+                    push(op1 * op2);
+                    break;
+                case '/':
+                    push(op1 / op2);
+                    break;
+                case '%':
+                    push(op1 % op2);
+                    break;
+                case '^':
+                    push(pow(op1, op2));
+                    break;
+                default:
+                    printf("Invalid character in expression!\n");
+                    exit(EXIT_FAILURE);
+            }
+        }
+    }
+
+    if (top != 0) {
+        printf("Invalid expression!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    int res = pop();
+    printf("Result = %d\n", res);
+    return 0;
+}
