@@ -1,0 +1,184 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define the structure for student data
+struct Student {
+    char name[50];
+    char branch[20];
+    int sem;
+    long long mobileNo;
+    struct Student* next;
+};
+
+// Function to create a new student node
+struct Student* createStudent(char name[], char branch[], int sem, long long mobileNo) {
+    struct Student* newNode = (struct Student*)malloc(sizeof(struct Student));
+    strcpy(newNode->name, name);
+    strcpy(newNode->branch, branch);
+    newNode->sem = sem;
+    newNode->mobileNo = mobileNo;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a student at the front of the list
+void insertFront(struct Student** head, struct Student* newStudent) {
+    newStudent->next = *head;
+    *head = newStudent;
+}
+
+// Function to display the student list and count nodes
+void displayAndCount(struct Student* head) {
+    int count = 0;
+    printf("Student List:\n");
+    struct Student* current = head;
+    while (current != NULL) {
+        printf("Name: %s, Branch: %s, Sem: %d, Mobile No: %lld\n",
+               current->name, current->branch, current->sem, current->mobileNo);
+        current = current->next;
+        count++;
+    }
+    printf("Total number of students: %d\n", count);
+}
+
+// Function to insert a student at the end of the list
+void insertEnd(struct Student** head, struct Student* newStudent) {
+    if (*head == NULL) {
+        *head = newStudent;
+    } else {
+        struct Student* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newStudent;
+    }
+}
+
+// Function to delete a student from the front of the list
+void deleteFront(struct Student** head) {
+    if (*head == NULL) {
+        printf("List is empty. Cannot delete.\n");
+        return;
+    }
+    struct Student* temp = *head;
+    *head = (*head)->next;
+    free(temp);
+}
+
+// Function to delete a student from the end of the list
+void deleteEnd(struct Student** head) {
+    if (*head == NULL) {
+        printf("List is empty. Cannot delete.\n");
+        return;
+    }
+    if ((*head)->next == NULL) {
+        free(*head);
+        *head = NULL;
+        return;
+    }
+    struct Student* current = *head;
+    while (current->next->next != NULL) {
+        current = current->next;
+    }
+    free(current->next);
+    current->next = NULL;
+}
+
+// Function to demonstrate using the SLL as a stack (push operation)
+void push(struct Student** head, struct Student* newStudent) {
+    insertFront(head, newStudent);
+}
+
+// Function to demonstrate using the SLL as a stack (pop operation)
+void pop(struct Student** head) {
+    deleteFront(head);
+}
+
+// Function to demonstrate using the SLL as a queue (enqueue operation)
+void enqueue(struct Student** head, struct Student* newStudent) {
+    insertEnd(head, newStudent);
+}
+
+// Function to demonstrate using the SLL as a queue (dequeue operation)
+void dequeue(struct Student** head) {
+    deleteFront(head);
+}
+
+int main() {
+    struct Student* studentList = NULL;
+    int choice;
+    char name[50], branch[20];
+    int sem;
+    long long mobileNo;
+
+    while (1) {
+        printf("\nSingly Linked List Operations:\n");
+        printf("1. Create a student (front insertion)\n");
+        printf("2. Display student list and count nodes\n");
+        printf("3. Insert at the end (enqueue)\n");
+        printf("4. Delete from the end (dequeue)\n");
+        printf("5. Insert at the front (push)\n");
+        printf("6. Delete from the front (pop)\n");
+        printf("7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter student details:\n");
+                printf("Name: ");
+                scanf("%s", name);
+                printf("Branch: ");
+                scanf("%s", branch);
+                printf("Semester: ");
+                scanf("%d", &sem);
+                printf("Mobile No: ");
+                scanf("%lld", &mobileNo);
+                insertFront(&studentList, createStudent(name, branch, sem, mobileNo));
+                break;
+            case 2:
+                displayAndCount(studentList);
+                break;
+            case 3:
+                printf("Enter student details:\n");
+                printf("Name: ");
+                scanf("%s", name);
+                printf("Branch: ");
+                scanf("%s", branch);
+                printf("Semester: ");
+                scanf("%d", &sem);
+                printf("Mobile No: ");
+                scanf("%lld", &mobileNo);
+                insertEnd(&studentList, createStudent(name, branch, sem, mobileNo));
+                break;
+            case 4:
+                dequeue(&studentList);
+                printf("Student dequeued.\n");
+                break;
+            case 5:
+                printf("Enter student details:\n");
+                printf("Name: ");
+                scanf("%s", name);
+                printf("Branch: ");
+                scanf("%s", branch);
+                printf("Semester: ");
+                scanf("%d", &sem);
+                printf("Mobile No: ");
+                scanf("%lld", &mobileNo);
+                push(&studentList, createStudent(name, branch, sem, mobileNo));
+                break;
+            case 6:
+                pop(&studentList);
+                printf("Student popped.\n");
+                break;
+            case 7:
+                printf("Exiting program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice! Please enter a valid option.\n");
+        }
+    }
+
+    return 0;
+}
