@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h> // For isalnum()
+
+#define MAX_SIZE 100
+
+// Stack implementation using an array
+struct Stack {
+    int top;
+    char items[MAX_SIZE];
+};
+
+// Initialize an empty stack
+void initialize(struct Stack* stack) {
+    stack->top = -1;
+}
+
+// Push an item onto the stack
+void push(struct Stack* stack, char item) {
+    if (stack->top == MAX_SIZE - 1) {
+        printf("Stack overflow!\n");
+        exit(1);
+    }
+    stack->items[++stack->top] = item;
+}
+
+// Pop an item from the stack
+char pop(struct Stack* stack) {
+    if (stack->top == -1) {
+        printf("Stack underflow!\n");
+        exit(1);
+    }
+    return stack->items[stack->top--];
+}
+
+// Get the top item from the stack without removing it
+char peek(struct Stack* stack) {
+    return stack->items[stack->top];
+}
+
+// Check if the stack is empty
+int isEmpty(struct Stack* stack) {
+    return stack->top == -1;
+}
+
+// Function to check the precedence of operators
+int precedence(char op) {
+    if (op == '+' || op == '-')
+        return 1;
+    if (op == '*' || op == '/')
+        return 2;
+    return 0;
+}
+
+// Function to convert infix expression to postfix expression
+void infixToPostfix(char infix[], char postfix[]) {
+    struct Stack stack;
+    initialize(&stack);
+    int i = 0, j = 0;
+
+    while (infix[i] != '\0') {
+        char ch = infix[i];
+
+        if (isalnum(ch)) {
+            postfix[j++] = ch;
+        } else if (ch == '(') {
+            push(&stack, ch);
+        } else if (ch == ')') {
+            while (!isEmpty(&stack) && peek(&stack) != '(') {
+                postfix[j++] = pop(&stack);
+            }
+            pop(&stack); // Remove '('
+        } else {
+            while (!isEmpty(&stack) && precedence(ch) <= precedence(peek(&stack))) {
+                postfix[j++] = pop(&stack);
+            }
+            push(&stack, ch);
+        }
+
+        i++;
+    }
+
+    while (!isEmpty(&stack)) {
+        postfix[j++] = pop(&stack);
+    }
+
+    postfix[j] = '\0';
+}
+
+int main() {
+    char infix[MAX_SIZE];
+    char postfix[MAX_SIZE];
+
+    printf("Enter an infix expression: ");
+    scanf("%s", infix);
+
+    infixToPostfix(infix, postfix);
+
+    printf("Postfix expression: %s\n", postfix);
+
+    return 0;
+}
