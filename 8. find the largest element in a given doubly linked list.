@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a doubly linked list node
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the beginning
+struct Node* insertAtBeginning(struct Node* head, int data) {
+    struct Node* newNode = createNode(data);
+    if (head == NULL) {
+        head = newNode;
+    } else {
+        newNode->next = head;
+        head->prev = newNode;
+        head = newNode;
+    }
+    return head;
+}
+
+// Function to find the largest element in the doubly linked list
+int findLargest(struct Node* head) {
+    int largest = head->data;
+    struct Node* temp = head->next;
+
+    while (temp != NULL) {
+        if (temp->data > largest) {
+            largest = temp->data;
+        }
+        temp = temp->next;
+    }
+
+    return largest;
+}
+
+int main() {
+    struct Node* head = NULL;
+    int n, data;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    printf("Enter the values for the nodes:\n");
+    for (int i = 0; i < n; ++i) {
+        scanf("%d", &data);
+        head = insertAtBeginning(head, data);
+    }
+
+    int largest = findLargest(head);
+    printf("The largest element in the doubly linked list is: %d\n", largest);
+
+    return 0;
+}
