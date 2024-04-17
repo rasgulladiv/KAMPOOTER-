@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a queue node
+struct QueueNode {
+    int data;
+    struct QueueNode* next;
+};
+
+// Initialize an empty queue
+struct QueueNode* initializeQueue() {
+    return NULL;
+}
+
+// Check if the queue is empty
+int isEmpty(struct QueueNode* front) {
+    return front == NULL;
+}
+
+// Check if the queue is full (always false for linked list implementation)
+int isFull() {
+    return 0;
+}
+
+// Enqueue an item
+struct QueueNode* enqueue(struct QueueNode* rear, int item) {
+    struct QueueNode* newNode = (struct QueueNode*)malloc(sizeof(struct QueueNode));
+    newNode->data = item;
+    newNode->next = NULL;
+    if (rear == NULL) {
+        return newNode;
+    }
+    rear->next = newNode;
+    return newNode;
+}
+
+// Dequeue an item
+struct QueueNode* dequeue(struct QueueNode* front) {
+    if (front == NULL) {
+        printf("Queue underflow!\n");
+        exit(1);
+    }
+    struct QueueNode* temp = front;
+    front = front->next;
+    free(temp);
+    return front;
+}
+
+// Display the queue
+void display(struct QueueNode* front) {
+    if (front == NULL) {
+        printf("Queue is empty.\n");
+        return;
+    }
+    printf("Queue contents: ");
+    while (front != NULL) {
+        printf("%d ", front->data);
+        front = front->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    struct QueueNode* front = initializeQueue();
+    struct QueueNode* rear = NULL;
+
+    int choice, data;
+
+    while (1) {
+        printf("\nQueue Operations:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display\n");
+        printf("4. Is Empty?\n");
+        printf("5. Is Full?\n");
+        printf("6. Quit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to enqueue: ");
+                scanf("%d", &data);
+                rear = enqueue(rear, data);
+                if (front == NULL) {
+                    front = rear;
+                }
+                break;
+            case 2:
+                front = dequeue(front);
+                break;
+            case 3:
+                display(front);
+                break;
+            case 4:
+                printf("Queue is %s.\n", isEmpty(front) ? "empty" : "not empty");
+                break;
+            case 5:
+                printf("Queue is never full in linked list implementation.\n");
+                break;
+            case 6:
+                printf("Exiting program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+
+    return 0;
+}
