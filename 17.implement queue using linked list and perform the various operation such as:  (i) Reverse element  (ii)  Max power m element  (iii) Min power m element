@@ -1,0 +1,198 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h> // for INT_MAX
+
+// Define the structure for a queue node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Define the structure for a queue
+struct Queue {
+    struct Node *front, *rear;
+};
+
+// Initialize an empty queue
+struct Queue* initializeQueue() {
+    struct Queue* queue = (struct Queue*)malloc(sizeof(struct Queue));
+    queue->front = queue->rear = NULL;
+    return queue;
+}
+
+// Check if the queue is empty
+int isEmpty(struct Queue* queue) {
+    return (queue->front == NULL);
+}
+
+// Enqueue an item into the queue
+void enqueue(struct Queue* queue, int item) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = item;
+    newNode->next = NULL;
+    if (isEmpty(queue)) {
+        queue->front = queue->rear = newNode;
+    } else {
+        queue->rear->next = newNode;
+        queue->rear = newNode;
+    }
+}
+
+// Dequeue an item from the queue
+int dequeue(struct Queue* queue) {
+    if (isEmpty(queue)) {
+        printf("Queue underflow!\n");
+        exit(1);
+    }
+    struct Node* temp = queue->front;
+    int data = temp->data;
+    queue->front = queue->front->next;
+    free(temp);
+    if (queue->front == NULL) {
+        queue->rear = NULL;
+    }
+    return data;
+}
+
+// Reverse the elements of the queue
+void reverse(struct Queue* queue) {
+    struct Node* prev = NULL;
+    struct Node* current = queue->front;
+    struct Node* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    queue->rear = queue->front;
+    queue->front = prev;
+}
+
+// Calculate power of a number
+int power(int base, int exponent) {
+    int result = 1;
+    for (int i = 0; i < exponent; i++) {
+        result *= base;
+    }
+    return result;
+}
+
+// Find the maximum power m element in the queue
+int maxPowerM(struct Queue* queue, int m) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty.\n");
+        exit(1);
+    }
+
+    int maxPower = -1;
+    struct Node* current = queue->front;
+    while (current != NULL) {
+        int num = current->data;
+        int digitCount = log10(num) + 1;
+        if (digitCount >= m) {
+            int lastDigit = num % 10;
+            int powerM = power(lastDigit, m);
+            if (powerM > maxPower) {
+                maxPower = powerM;
+            }
+        }
+        current = current->next;
+    }
+    return maxPower;
+}
+
+// Find the minimum power m element in the queue
+int minPowerM(struct Queue* queue, int m) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty.\n");
+        exit(1);
+    }
+
+    int minPower = INT_MAX; // INT_MAX is defined in limits.h
+    struct Node* current = queue->front;
+    while (current != NULL) {
+        int num = current->data;
+        int digitCount = log10(num) + 1;
+        if (digitCount >= m) {
+            int lastDigit = num % 10;
+            int powerM = power(lastDigit, m);
+            if (powerM < minPower) {
+                minPower = powerM;
+            }
+        }
+        current = current->next;
+    }
+    return minPower;
+}
+
+// Display the contents of the queue
+void display(struct Queue* queue) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty.\n");
+        return;
+    }
+    struct Node* current = queue->front;
+    printf("Queue contents: ");
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Queue* queue = initializeQueue();
+    int choice, item, m;
+
+    while (1) {
+        printf("\nQueue Operations:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Reverse\n");
+        printf("4. Find max power m element\n");
+        printf("5. Find min power m element\n");
+        printf("6. Display\n");
+        printf("7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to enqueue: ");
+                scanf("%d", &item);
+                enqueue(queue, item);
+                break;
+            case 2:
+                printf("Dequeued item: %d\n", dequeue(queue));
+                break;
+            case 3:
+                reverse(queue);
+                printf("Queue elements reversed.\n");
+                break;
+            case 4:
+                printf("Enter the value of m: ");
+                scanf("%d", &m);
+                printf("Maximum power m element: %d\n", maxPowerM(queue, m));
+                break;
+            case 5:
+                printf("Enter the value of m: ");
+                scanf("%d", &m);
+                printf("Minimum power m element: %d\n", minPowerM(queue, m));
+                break;
+            case 6:
+                display(queue);
+                break;
+            case 7:
+                printf("Exiting program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice! Please enter a valid option.\n");
+        }
+    }
+
+    return 0;
+}
