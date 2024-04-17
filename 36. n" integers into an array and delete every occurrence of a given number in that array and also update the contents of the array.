@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+void removeOccurrences(int arr[], int *size, int val) {
+    int i, j;
+    for (i = 0; i < *size; i++) {
+        if (arr[i] == val) {
+            // Shift elements to the left to overwrite the occurrence
+            for (j = i; j < (*size - 1); j++) {
+                arr[j] = arr[j + 1];
+            }
+            (*size)--; // Reduce the size of the array
+            i--; // Recheck the current position after shifting
+        }
+    }
+}
+
+int main() {
+    int arr[100], n, i, value;
+
+    printf("Enter the number of elements in the array: ");
+    scanf("%d", &n);
+
+    printf("Enter the elements of the array:\n");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    printf("Enter the value to be removed: ");
+    scanf("%d", &value);
+
+    removeOccurrences(arr, &n, value);
+
+    printf("Updated array after removing %d:\n", value);
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    return 0;
+}
