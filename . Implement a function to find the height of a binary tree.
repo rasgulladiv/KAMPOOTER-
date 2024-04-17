@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a binary tree node
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new binary tree node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a node into the binary tree
+struct Node* insertNode(struct Node* root, int data) {
+    if (root == NULL)
+        return createNode(data);
+
+    if (data < root->data)
+        root->left = insertNode(root->left, data);
+    else if (data > root->data)
+        root->right = insertNode(root->right, data);
+
+    return root;
+}
+
+// Function to find the height of a binary tree
+int treeHeight(struct Node* root) {
+    if (root == NULL)
+        return 0;
+    else {
+        int leftHeight = treeHeight(root->left);
+        int rightHeight = treeHeight(root->right);
+        return (leftHeight > rightHeight) ? leftHeight + 1 : rightHeight + 1;
+    }
+}
+
+int main() {
+    struct Node* root = NULL;
+    int n, data;
+
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    printf("Enter the values for the nodes:\n");
+    for (int i = 0; i < n; ++i) {
+        scanf("%d", &data);
+        root = insertNode(root, data);
+    }
+
+    printf("Height of the binary tree: %d\n", treeHeight(root));
+
+    return 0;
+}
