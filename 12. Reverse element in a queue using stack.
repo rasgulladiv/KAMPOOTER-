@@ -1,0 +1,159 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a stack node
+struct StackNode {
+    int data;
+    struct StackNode* next;
+};
+
+// Structure for a queue node
+struct QueueNode {
+    int data;
+    struct QueueNode* next;
+};
+
+// Structure for a queue
+struct Queue {
+    struct QueueNode* front;
+    struct QueueNode* rear;
+};
+
+// Initialize an empty stack
+struct StackNode* initializeStack() {
+    return NULL;
+}
+
+// Initialize an empty queue
+struct Queue* initializeQueue() {
+    struct Queue* queue = (struct Queue*)malloc(sizeof(struct Queue));
+    queue->front = queue->rear = NULL;
+    return queue;
+}
+
+// Check if the stack is empty
+int isStackEmpty(struct StackNode* top) {
+    return top == NULL;
+}
+
+// Check if the queue is empty
+int isQueueEmpty(struct Queue* queue) {
+    return queue->front == NULL;
+}
+
+// Push an item onto the stack
+struct StackNode* push(struct StackNode* top, int item) {
+    struct StackNode* newNode = (struct StackNode*)malloc(sizeof(struct StackNode));
+    newNode->data = item;
+    newNode->next = top;
+    return newNode;
+}
+
+// Pop an item from the stack
+struct StackNode* pop(struct StackNode* top) {
+    if (isStackEmpty(top)) {
+        printf("Stack underflow!\n");
+        exit(1);
+    }
+    struct StackNode* temp = top;
+    top = top->next;
+    free(temp);
+    return top;
+}
+
+// Enqueue an item
+void enqueue(struct Queue* queue, int item) {
+    struct QueueNode* newNode = (struct QueueNode*)malloc(sizeof(struct QueueNode));
+    newNode->data = item;
+    newNode->next = NULL;
+    if (queue->rear == NULL) {
+        queue->front = queue->rear = newNode;
+    } else {
+        queue->rear->next = newNode;
+        queue->rear = newNode;
+    }
+}
+
+// Dequeue an item
+int dequeue(struct Queue* queue) {
+    if (isQueueEmpty(queue)) {
+        printf("Queue underflow!\n");
+        exit(1);
+    }
+    struct QueueNode* temp = queue->front;
+    int item = temp->data;
+    queue->front = queue->front->next;
+    free(temp);
+    if (queue->front == NULL) {
+        queue->rear = NULL;
+    }
+    return item;
+}
+
+// Reverse the queue using a stack
+void reverseQueue(struct Queue* queue) {
+    struct StackNode* stack = initializeStack();
+
+    while (!isQueueEmpty(queue)) {
+        int item = dequeue(queue);
+        stack = push(stack, item);
+    }
+
+    while (!isStackEmpty(stack)) {
+        int item = stack->data;
+        enqueue(queue, item);
+        stack = pop(stack);
+    }
+}
+
+// Display the queue
+void displayQueue(struct Queue* queue) {
+    struct QueueNode* temp = queue->front;
+    printf("Queue contents: ");
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Queue* queue = initializeQueue();
+    int choice, data;
+
+    while (1) {
+        printf("\nQueue Operations:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Reverse Queue\n");
+        printf("4. Display\n");
+        printf("5. Quit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to enqueue: ");
+                scanf("%d", &data);
+                enqueue(queue, data);
+                break;
+            case 2:
+                printf("Dequeued: %d\n", dequeue(queue));
+                break;
+            case 3:
+                reverseQueue(queue);
+                printf("Queue reversed.\n");
+                break;
+            case 4:
+                displayQueue(queue);
+                break;
+            case 5:
+                printf("Exiting program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+
+    return 0;
+}
