@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define structure for a binary tree node
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+// Function to create a new node
+struct TreeNode* createNode(int value) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert node level by level
+void insertLevelOrder(struct TreeNode** root, int data) {
+    if (*root == NULL) {
+        *root = createNode(data);
+        return;
+    }
+    // Create a queue for level order traversal
+    struct TreeNode* queue[100];
+    int front = -1, rear = -1;
+    queue[++rear] = *root;
+    while (front != rear) {
+        struct TreeNode* temp = queue[++front];
+        if (temp->left == NULL) {
+            temp->left = createNode(data);
+            return;
+        } else {
+            queue[++rear] = temp->left;
+        }
+        if (temp->right == NULL) {
+            temp->right = createNode(data);
+            return;
+        } else {
+            queue[++rear] = temp->right;
+        }
+    }
+}
+
+// Function to perform Breadth-First Traversal
+void BFS(struct TreeNode* root) {
+    // Check if the tree is empty
+    if (root == NULL) {
+        printf("Tree is empty\n");
+        return;
+    }
+    // Create a queue for BFS traversal
+    struct TreeNode* queue[100];
+    int front = -1, rear = -1;
+    queue[++rear] = root;
+    while (front != rear) {
+        struct TreeNode* temp = queue[++front];
+        printf("%d ", temp->data);
+        if (temp->left != NULL) {
+            queue[++rear] = temp->left;
+        }
+        if (temp->right != NULL) {
+            queue[++rear] = temp->right;
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    struct TreeNode* root = NULL;
+    int n, data;
+
+    printf("Enter the number of nodes in the binary tree: ");
+    scanf("%d", &n);
+
+    printf("Enter the elements of the binary tree level by level:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &data);
+        insertLevelOrder(&root, data);
+    }
+
+    printf("Breadth-First Traversal of the binary tree: ");
+    BFS(root);
+
+    return 0;
+}
