@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define the structure for employee data
+struct Employee {
+    char name[50];
+    char dept[20];
+    char designation[30];
+    double salary;
+    struct Employee* prev;
+    struct Employee* next;
+};
+
+// Function to create a new employee node
+struct Employee* createEmployee(char name[], char dept[], char designation[], double salary) {
+    struct Employee* newNode = (struct Employee*)malloc(sizeof(struct Employee));
+    strcpy(newNode->name, name);
+    strcpy(newNode->dept, dept);
+    strcpy(newNode->designation, designation);
+    newNode->salary = salary;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert an employee at the end of the DLL
+void insertAtEnd(struct Employee** head, char name[], char dept[], char designation[], double salary) {
+    struct Employee* newEmployee = createEmployee(name, dept, designation, salary);
+    if (*head == NULL) {
+        *head = newEmployee;
+    } else {
+        struct Employee* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newEmployee;
+        newEmployee->prev = current;
+    }
+}
+
+// Function to display the DLL and count nodes
+void displayAndCount(struct Employee* head) {
+    int count = 0;
+    printf("Employee List:\n");
+    struct Employee* current = head;
+    while (current != NULL) {
+        printf("Name: %s, Dept: %s, Designation: %s, Salary: %.2lf\n",
+               current->name, current->dept, current->designation, current->salary);
+        current = current->next;
+        count++;
+    }
+    printf("Total number of employees: %d\n", count);
+}
+
+// Function to delete an employee from the end of the DLL
+void deleteFromEnd(struct Employee** head) {
+    if (*head == NULL) {
+        printf("DLL is empty. Cannot delete.\n");
+        return;
+    }
+    struct Employee* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    if (current->prev != NULL) {
+        current->prev->next = NULL;
+    } else {
+        *head = NULL;
+    }
+    free(current);
+}
+
+int main() {
+    struct Employee* employeeList = NULL;
+    int choice;
+    char name[50], dept[20], designation[30];
+    double salary;
+
+    while (1) {
+        printf("\nDoubly Linked List Operations:\n");
+        printf("1. Insert at the end\n");
+        printf("2. Display the employee list and count nodes\n");
+        printf("3. Delete from the end\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter employee details:\n");
+                printf("Name: ");
+                scanf("%s", name);
+                printf("Dept: ");
+                scanf("%s", dept);
+                printf("Designation: ");
+                scanf("%s", designation);
+                printf("Salary: ");
+                scanf("%lf", &salary);
+                insertAtEnd(&employeeList, name, dept, designation, salary);
+                break;
+            case 2:
+                displayAndCount(employeeList);
+                break;
+            case 3:
+                deleteFromEnd(&employeeList);
+                break;
+            case 4:
+                printf("Exiting the program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
