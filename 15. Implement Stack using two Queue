@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+// Structure for a queue
+struct Queue {
+    int front, rear;
+    int items[MAX_SIZE];
+};
+
+// Initialize an empty queue
+void initialize(struct Queue* queue) {
+    queue->front = queue->rear = -1;
+}
+
+// Check if the queue is empty
+int isEmpty(struct Queue* queue) {
+    return queue->front == -1;
+}
+
+// Check if the queue is full
+int isFull(struct Queue* queue) {
+    return queue->rear == MAX_SIZE - 1;
+}
+
+// Enqueue an item
+void enqueue(struct Queue* queue, int item) {
+    if (isFull(queue)) {
+        printf("Queue overflow!\n");
+        exit(1);
+    }
+    if (isEmpty(queue))
+        queue->front = 0;
+    queue->items[++queue->rear] = item;
+}
+
+// Dequeue an item
+int dequeue(struct Queue* queue) {
+    if (isEmpty(queue)) {
+        printf("Queue underflow!\n");
+        exit(1);
+    }
+    int item = queue->items[queue->front++];
+    if (queue->front > queue->rear)
+        initialize(queue);
+    return item;
+}
+
+// Push an item onto the stack
+void push(struct Queue* q1, int item) {
+    enqueue(q1, item);
+}
+
+// Pop an item from the stack
+int pop(struct Queue* q1, struct Queue* q2) {
+    if (isEmpty(q1)) {
+        printf("Stack underflow!\n");
+        exit(1);
+    }
+    while (q1->front < q1->rear) {
+        enqueue(q2, dequeue(q1));
+    }
+    int poppedItem = dequeue(q1);
+    while (!isEmpty(q2)) {
+        enqueue(q1, dequeue(q2));
+    }
+    return poppedItem;
+}
+
+int main() {
+    struct Queue q1, q2;
+    initialize(&q1);
+    initialize(&q2);
+
+    int choice, data;
+
+    while (1) {
+        printf("\nStack Operations:\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Quit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to push: ");
+                scanf("%d", &data);
+                push(&q1, data);
+                break;
+            case 2:
+                printf("Popped: %d\n", pop(&q1, &q2));
+                break;
+            case 3:
+                printf("Exiting program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+
+    return 0;
+}
