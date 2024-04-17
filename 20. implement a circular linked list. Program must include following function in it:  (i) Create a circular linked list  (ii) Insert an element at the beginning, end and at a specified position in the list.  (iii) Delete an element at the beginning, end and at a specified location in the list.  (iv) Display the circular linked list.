@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a circular linked list node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the beginning of the circular linked list
+void insertAtBeginning(struct Node** head, int value) {
+    struct Node* newNode = createNode(value);
+    if (*head == NULL) {
+        newNode->next = newNode; // Only one node, so it points to itself
+        *head = newNode;
+    } else {
+        newNode->next = (*head)->next;
+        (*head)->next = newNode;
+    }
+}
+
+// Function to insert a node at the end of the circular linked list
+void insertAtEnd(struct Node** head, int value) {
+    struct Node* newNode = createNode(value);
+    if (*head == NULL) {
+        newNode->next = newNode; // Only one node, so it points to itself
+        *head = newNode;
+    } else {
+        newNode->next = (*head)->next;
+        (*head)->next = newNode;
+        *head = newNode; // Update the head to the new node
+    }
+}
+
+// Function to display the circular linked list
+void display(struct Node* head) {
+    if (head == NULL) {
+        printf("Circular linked list is empty.\n");
+        return;
+    }
+    struct Node* current = head->next;
+    do {
+        printf("%d ", current->data);
+        current = current->next;
+    } while (current != head->next);
+    printf("\n");
+}
+
+// Function to delete the first node from the circular linked list
+void deleteFromBeginning(struct Node** head) {
+    if (*head == NULL) {
+        printf("Circular linked list is empty. Cannot delete.\n");
+        return;
+    }
+    struct Node* temp = (*head)->next;
+    if (temp == *head) {
+        *head = NULL; // Only one node, so set head to NULL
+    } else {
+        (*head)->next = temp->next;
+    }
+    free(temp);
+}
+
+// Function to delete the last node from the circular linked list
+void deleteFromEnd(struct Node** head) {
+    if (*head == NULL) {
+        printf("Circular linked list is empty. Cannot delete.\n");
+        return;
+    }
+    struct Node* current = (*head)->next;
+    while (current->next != *head) {
+        current = current->next;
+    }
+    current->next = (*head)->next;
+    free(*head);
+    *head = current;
+}
+
+int main() {
+    struct Node* circularList = NULL;
+    int choice, value;
+
+    while (1) {
+        printf("\nCircular Linked List Operations:\n");
+        printf("1. Insert at the beginning\n");
+        printf("2. Insert at the end\n");
+        printf("3. Display the circular linked list\n");
+        printf("4. Delete from the beginning\n");
+        printf("5. Delete from the end\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter a value to insert at the beginning: ");
+                scanf("%d", &value);
+                insertAtBeginning(&circularList, value);
+                break;
+            case 2:
+                printf("Enter a value to insert at the end: ");
+                scanf("%d", &value);
+                insertAtEnd(&circularList, value);
+                break;
+            case 3:
+                display(circularList);
+                break;
+            case 4:
+                deleteFromBeginning(&circularList);
+                break;
+            case 5:
+                deleteFromEnd(&circularList);
+                break;
+            case 6:
+                printf("Exiting the program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
